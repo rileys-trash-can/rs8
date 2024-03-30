@@ -1,4 +1,4 @@
-package nt8
+package rs8
 
 import (
 	"bufio"

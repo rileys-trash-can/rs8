@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/rileys-trash-can/newtecrs82obs"
+	"github.com/rileys-trash-can/rs8"
 	"log"
 	"os"
 )
@@ -12,7 +12,7 @@ func main() {
 	}
 
 	port := os.Args[1]
-	conn, err := nt8.Open(port)
+	conn, err := rs8.Open(port)
 	if err != nil {
 		log.Fatalf("Failed to connect: %s", err)
 	}
@@ -25,10 +25,10 @@ func main() {
 		e := <-ch
 
 		switch event := e.(type) {
-		case *nt8.EventButton:
+		case *rs8.EventButton:
 			log.Printf("%T %#v", event, event)
 
-		case *nt8.EventSlider:
+		case *rs8.EventSlider:
 			log.Printf("%X %3d", event.Type, event.Value)
 		}
 	}

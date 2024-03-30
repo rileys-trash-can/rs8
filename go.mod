@@ -1,4 +1,4 @@
-module github.com/rileys-trash-can/newtecrs82obs
+module github.com/rileys-trash-can/rs8
 
 go 1.22.1
 

@@ -6,7 +6,7 @@ import (
 	obss "github.com/andreykaipov/goobs/api/events/subscriptions"
 	obssc "github.com/andreykaipov/goobs/api/requests/scenes"
 	obst "github.com/andreykaipov/goobs/api/requests/transitions"
-	"github.com/rileys-trash-can/newtecrs82obs"
+	"github.com/rileys-trash-can/rs8"
 	"gopkg.in/yaml.v3"
 	"log"
 	"math/rand"
@@ -50,7 +50,7 @@ func main() {
 	readconfig()
 
 	port := Config.Serial
-	conn, err := nt8.Open(port)
+	conn, err := rs8.Open(port)
 	if err != nil {
 		log.Fatalf("Failed to connect: %s", err)
 	}
@@ -126,34 +126,34 @@ func main() {
 		switch event := l.(type) {
 		case *obse.CurrentPreviewSceneChanged:
 			log.Printf("current preview scene: %s %d", event.SceneName, scenenamemap[event.SceneName]+1)
-			program := make([]nt8.CmdLight, 0)
+			program := make([]rs8.CmdLight, 0)
 
 			for i := uint8(0); i < 8; i++ {
-				program = append(program, nt8.CmdLight{
-					Type:  nt8.ButtonPreview,
+				program = append(program, rs8.CmdLight{
+					Type:  rs8.ButtonPreview,
 					Value: i,
-					State: nt8.LightOff,
+					State: rs8.LightOff,
 				})
 			}
 
-			program[7-scenenamemap[event.SceneName]].State = nt8.LightOn
+			program[7-scenenamemap[event.SceneName]].State = rs8.LightOn
 
 			conn.LightCmdCh <- program
 			break
 
 		case *obse.CurrentProgramSceneChanged:
 			log.Printf("current program scene: %s %d", event.SceneName, scenenamemap[event.SceneName]+1)
-			program := make([]nt8.CmdLight, 0)
+			program := make([]rs8.CmdLight, 0)
 
 			for i := uint8(0); i < 8; i++ {
-				program = append(program, nt8.CmdLight{
-					Type:  nt8.ButtonProgram,
+				program = append(program, rs8.CmdLight{
+					Type:  rs8.ButtonProgram,
 					Value: i,
-					State: nt8.LightOff,
+					State: rs8.LightOff,
 				})
 			}
 
-			program[7-scenenamemap[event.SceneName]].State = nt8.LightOn
+			program[7-scenenamemap[event.SceneName]].State = rs8.LightOn
 
 			conn.LightCmdCh <- program
 			break
@@ -182,30 +182,30 @@ func main() {
 
 		case e := <-ch:
 			switch event := e.(type) {
-			case *nt8.EventButton:
+			case *rs8.EventButton:
 				if event.Direction != 0 {
 					continue
 				}
 
 				switch event.Type {
-				case nt8.ButtonProgram:
+				case rs8.ButtonProgram:
 					log.Printf("Setting Program to %d", 7-event.Value)
 					obsc.Scenes.SetCurrentProgramScene(&obssc.SetCurrentProgramSceneParams{
 						SceneName: &sceneindex[7-event.Value],
 					})
 
 					break
-				case nt8.ButtonPreview:
+				case rs8.ButtonPreview:
 					log.Printf("Setting Program to %d", 7-event.Value)
 					obsc.Scenes.SetCurrentPreviewScene(&obssc.SetCurrentPreviewSceneParams{
 						SceneName: &sceneindex[7-event.Value],
 					})
 
 					break
-				case nt8.ButtonAutoTakeDSK:
+				case rs8.ButtonAutoTakeDSK:
 					switch event.Value {
 					case 0x01: // TAKE or 0x02
-						if deb(nt8.ButtonAutoTakeDSK<<8 | 0x01) {
+						if deb(rs8.ButtonAutoTakeDSK<<8 | 0x01) {
 							continue
 						}
 
@@ -274,8 +274,8 @@ func main() {
 				}
 				break
 
-			case *nt8.EventSlider:
-				if event.Type == nt8.SliderTbar {
+			case *rs8.EventSlider:
+				if event.Type == rs8.SliderTbar {
 					value := (float64(event.Value)) / 250
 					if value > 1 {
 						value = 1

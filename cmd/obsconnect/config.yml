@@ -3,7 +3,7 @@ serial.port: "/dev/ttyUSB0"
 boolshit: true
 
 obs.addr: "10.10.42.160:4444"
-obs.pass: "asdfgh"
+obs.pass: "LiviT2005"
 
 trans.auto: "Fade"
 trans.take: "Cut"
